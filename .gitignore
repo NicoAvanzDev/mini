@@ -365,3 +365,9 @@ FodyWeavers.xsd
 cmake-build-debug
 
 .idea/
+.idea/codeStyles/codeStyleConfig.xml
+.idea/codeStyles/Project.xml
+.idea/mini.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
