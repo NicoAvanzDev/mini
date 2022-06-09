@@ -6,7 +6,7 @@
 
 int lzw_encode(FILE* f_in, FILE* f_out)
 {
-    ht_init();
+    ht_t* hash_table = ht_init();
 
     char word[MAX_STR_LENGTH] = {'\0'};
     int word_length = 0;
@@ -20,7 +20,7 @@ int lzw_encode(FILE* f_in, FILE* f_out)
         strncat(new_word, word, strnlen(word, MAX_STR_LENGTH));
         strncat(new_word, &c, 1);
 
-        ht_entry_t* entry = ht_search(new_word);
+        ht_entry_t* entry = ht_search(hash_table, new_word);
         if (entry != NULL)
         {
             strcpy(word, new_word);
@@ -28,7 +28,7 @@ int lzw_encode(FILE* f_in, FILE* f_out)
         }
         else
         {
-            ht_entry_t* word_pos = ht_search(word);
+            ht_entry_t* word_pos = ht_search(hash_table, word);
             if (word_pos != NULL)
             {
                 fwrite((const void*)&word_pos->pos, sizeof(int), 1, f_out);
@@ -39,7 +39,7 @@ int lzw_encode(FILE* f_in, FILE* f_out)
 
             strcpy(new_entry->str, new_word);
 
-            ht_insert(new_entry);
+            ht_insert(hash_table, new_entry);
 
             word[0] = c;
             word[1] = '\0';
@@ -47,7 +47,7 @@ int lzw_encode(FILE* f_in, FILE* f_out)
         }
     }
 
-    ht_free();
+    ht_free(hash_table);
 
     return 0;
 }

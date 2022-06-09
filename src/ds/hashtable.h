@@ -18,15 +18,21 @@ typedef struct
     int pos;
 } ht_entry_t;
 
-static ht_entry_t* hash_table[TABLE_SIZE];
-static int ht_size = 0;
+typedef struct
+{
+    ht_entry_t* entry[TABLE_SIZE];
+    int size;
+} ht_t;
 
-void ht_init();
-void ht_free();
+// static ht_entry_t* hash_table[TABLE_SIZE];
+// static int ht_size = 0;
 
-void ht_print();
+ht_t* ht_init();
+void ht_free(ht_t* hash_table);
 
-int ht_insert(ht_entry_t* entry);
-ht_entry_t* ht_search(char* str);
+void ht_print(ht_t* hash_table);
+
+int ht_insert(ht_t* hash_table, ht_entry_t* entry);
+ht_entry_t* ht_search(ht_t* hash_table, char* str);
 
 #endif // MINI_HASHTABLE_H

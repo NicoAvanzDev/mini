@@ -16,11 +16,14 @@ unsigned int hash(char* str)
     return hash_value;
 }
 
-void ht_init()
+ht_t* ht_init()
 {
+    ht_t* hash_table = malloc(sizeof(ht_t));
+    hash_table->size = 0;
+
     for (int i = 0; i < TABLE_SIZE; ++i)
     {
-        hash_table[i] = NULL;
+        hash_table->entry[i] = NULL;
     }
 
     for (int i = 0; i < 255; ++i)
@@ -30,69 +33,73 @@ void ht_init()
         entry->str[0] = (char)i;
         entry->str[1] = '\0';
 
-        ht_insert(entry);
+        ht_insert(hash_table, entry);
     }
+
+    return hash_table;
 }
 
-int ht_insert(ht_entry_t* entry)
+int ht_insert(ht_t* hash_table, ht_entry_t* entry)
 {
-    if (entry == NULL || ht_size >= TABLE_SIZE)
+    if (entry == NULL || hash_table == NULL || hash_table->size >= TABLE_SIZE)
         return 0;
 
     unsigned int index = hash(entry->str);
 
-    if (hash_table[index] != NULL) // collision
+    if (hash_table->entry[index] != NULL) // collision
     {
         for (int i = 0; i < TABLE_SIZE; ++i)
         {
-            if (hash_table[i] == NULL)
+            if (hash_table->entry[i] == NULL)
             {
                 index = i;
             }
         }
     }
 
-    entry->pos = ht_size;
+    entry->pos = hash_table->size;
 
-    hash_table[index] = entry;
+    hash_table->entry[index] = entry;
 
-    ht_size++;
+    hash_table->size++;
 
     return 1;
 }
 
-ht_entry_t* ht_search(char* str)
+ht_entry_t* ht_search(ht_t* hash_table, char* str)
 {
     unsigned int index = hash(str);
-    if (hash_table[index] != NULL && strcmp(hash_table[index]->str, str) == 0)
+    if (hash_table->entry[index] != NULL && strcmp(hash_table->entry[index]->str, str) == 0)
     {
-        return hash_table[index];
+        return hash_table->entry[index];
     }
-    return hash_table[index];
+    return hash_table->entry[index];
 }
 
-void ht_print()
+void ht_print(ht_t* hash_table)
 {
     for (int i = 0; i < TABLE_SIZE; i++)
     {
-        if (hash_table[i] == NULL)
+        if (hash_table->entry[i] == NULL)
         {
             printf("\t%i\t---\n", i);
         }
         else
         {
-            printf("\t%i\t%s\n", i, hash_table[i]->str);
+            printf("\t%i\t%s\n", i, hash_table->entry[i]->str);
         }
     }
 }
 
-void ht_free()
+void ht_free(ht_t* hash_table)
 {
     for (int i = 0; i < TABLE_SIZE; i++)
     {
-        if (hash_table[i] != NULL)
+        if (hash_table->entry[i] != NULL)
         {
-            free(hash_table[i]);
+            free(hash_table->entry[i]);
         }
     }
+
+    free(hash_table);
 }
